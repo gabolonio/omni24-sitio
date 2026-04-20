@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>omni24 — Monitoreo con IA para tu negocio</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    color: #1a1a2e;
+    background: #ffffff;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* === NAV === */
+  nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    border-bottom: 1px solid #eee;
+  }
+
+  .nav-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo { font-size: 22px; font-weight: 800; color: #1a1a2e; letter-spacing: -0.5px; }
+  .logo span { color: #4fc3f7; }
+
+  .nav-links { display: flex; gap: 28px; align-items: center; }
+  .nav-links a { text-decoration: none; color: #666; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: #1a1a2e; }
+  .nav-cta { background: #1a1a2e !important; color: white !important; padding: 8px 20px; border-radius: 8px; font-weight: 600 !important; transition: background 0.2s; }
+  .nav-cta:hover { background: #2a2a4e !important; }
+
+  /* === HERO === */
+  .hero {
+    padding: 130px 24px 80px;
+    text-align: center;
+    max-width: 840px;
+    margin: 0 auto;
+  }
+
+  .hero h1 {
+    font-size: clamp(30px, 5vw, 48px);
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    letter-spacing: -1px;
+    color: #1a1a2e;
+  }
+
+  .hero p {
+    font-size: 18px;
+    color: #666;
+    line-height: 1.6;
+    max-width: 580px;
+    margin: 0 auto 32px;
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #1a1a2e;
+    color: white;
+    font-size: 17px;
+    font-weight: 600;
+    padding: 16px 36px;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .hero-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(26,26,46,0.2);
+  }
+
+  .hero-sub {
+    margin-top: 12px;
+    font-size: 14px;
+    color: #999;
+  }
+
+  /* === IMAGES === */
+  .section-img {
+    border-radius: 16px;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* === APP PREVIEW === */
+  .app-preview {
+    max-width: 1080px;
+    margin: 0 auto 80px;
+    padding: 0 24px;
+  }
+
+  .app-preview-frame {
+    background: #f5f5f5;
+    border-radius: 20px;
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 48px;
+    flex-wrap: wrap;
+  }
+
+  .phone-mockup {
+    display: inline-block;
+    background: #1a1a2e;
+    border-radius: 36px;
+    padding: 12px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+
+  .phone-screen {
+    background: #0a0a14;
+    border-radius: 26px;
+    width: 280px;
+    height: 560px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .phone-screen .mock-score { font-size: 64px; font-weight: 800; color: #4fc3f7; line-height: 1; }
+  .phone-screen .mock-label { color: rgba(255,255,255,0.5); font-size: 12px; margin-top: 8px; margin-bottom: 24px; }
+  .phone-screen .mock-cat { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 13px; }
+  .phone-screen .mock-cat:last-child { border: none; }
+  .mock-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .mock-cat-name { flex: 1; text-align: left; color: rgba(255,255,255,0.7); }
+  .mock-cat-score { font-weight: 600; }
+
+  .preview-text {
+    max-width: 340px;
+  }
+
+  .preview-text h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .preview-text p {
+    font-size: 15px;
+    color: #666;
+    line-height: 1.6;
+  }
+
+  /* === PROBLEMA === */
+  .problema {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 80px 24px;
+    border-top: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    flex-wrap: wrap;
+  }
+
+  .problema-text { flex: 1; min-width: 320px; }
+
+  .section-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #4fc3f7;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .problema h2 {
+    font-size: clamp(24px, 3.5vw, 36px);
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 24px;
+  }
+
+  .problema p { font-size: 16px; color: #666; line-height: 1.7; }
+
+  .problema-img {
+    flex: 1;
+    min-width: 300px;
+  }
+
+  /* === SOLUCIÓN 3 PASOS === */
+  .solucion { background: #fafafa; padding: 80px 24px; }
+  .solucion-inner { max-width: 1080px; margin: 0 auto; }
+  .solucion h2 { font-size: clamp(24px, 3.5vw, 36px); font-weight: 700; margin-bottom: 48px; text-align: center; }
+
+  .pasos { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 32px; }
+  .paso { background: white; border-radius: 16px; padding: 32px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+  .paso-num { width: 40px; height: 40px; background: #1a1a2e; color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; margin-bottom: 16px; }
+  .paso h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .paso p { font-size: 14px; color: #666; line-height: 1.6; }
+  .paso .img-placeholder { margin-top: 16px; height: 140px; }
+
+  /* === DIFERENCIADOR === */
+  .diferenciador { max-width: 1080px; margin: 0 auto; padding: 80px 24px; }
+  .diferenciador h2 { font-size: clamp(24px, 3.5vw, 36px); font-weight: 700; margin-bottom: 16px; text-align: center; }
+  .diferenciador .sub { font-size: 16px; color: #666; text-align: center; margin-bottom: 48px; }
+
+  .comparativa { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 700px; margin: 0 auto; }
+  .comp-card { border-radius: 16px; padding: 32px; }
+  .comp-old { background: #f5f5f5; border: 1px solid #eee; }
+  .comp-new { background: #1a1a2e; color: white; }
+  .comp-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+  .comp-card ul { list-style: none; padding: 0; }
+  .comp-card li { font-size: 14px; line-height: 1.5; padding: 6px 0; display: flex; align-items: flex-start; gap: 8px; }
+  .comp-old li::before { content: "\2717"; color: #c62828; font-weight: 700; flex-shrink: 0; }
+  .comp-new li::before { content: "\2713"; color: #4caf50; font-weight: 700; flex-shrink: 0; }
+  .comp-new li { color: rgba(255,255,255,0.85); }
+
+  /* === FEATURES === */
+  .features { background: #fafafa; padding: 80px 24px; }
+  .features-inner { max-width: 1080px; margin: 0 auto; }
+  .features h2 { font-size: clamp(24px, 3.5vw, 36px); font-weight: 700; margin-bottom: 48px; text-align: center; }
+
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; }
+  .feature-card { background: white; border-radius: 16px; padding: 28px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+  .feature-icon { font-size: 28px; margin-bottom: 12px; }
+  .feature-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .feature-card p { font-size: 14px; color: #666; line-height: 1.5; }
+
+  /* === CASOS DE ÉXITO === */
+  .casos { padding: 80px 24px; }
+  .casos-inner { max-width: 1080px; margin: 0 auto; }
+  .casos h2 { font-size: clamp(24px, 3.5vw, 36px); font-weight: 700; margin-bottom: 16px; text-align: center; }
+  .casos .sub { font-size: 16px; color: #666; text-align: center; margin-bottom: 48px; }
+
+  .casos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+
+  .caso-card {
+    background: #fafafa;
+    border-radius: 16px;
+    padding: 32px;
+    border: 1px solid #eee;
+  }
+
+  .caso-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .caso-avatar {
+    width: 48px;
+    height: 48px;
+    background: #1a1a2e;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .caso-info h4 { font-size: 15px; font-weight: 700; }
+  .caso-info span { font-size: 13px; color: #999; }
+
+  .caso-quote {
+    font-size: 15px;
+    color: #444;
+    line-height: 1.6;
+    font-style: italic;
+    margin-bottom: 16px;
+  }
+
+  .caso-result {
+    background: #e8f5e9;
+    color: #2e7d32;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    display: inline-block;
+  }
+
+  /* === PRECIO === */
+  .precio { padding: 80px 24px; text-align: center; background: #fafafa; }
+  .precio h2 { font-size: clamp(24px, 3.5vw, 36px); font-weight: 700; margin-bottom: 16px; }
+  .precio .sub { font-size: 16px; color: #666; margin-bottom: 40px; }
+
+  .precio-card {
+    max-width: 440px;
+    margin: 0 auto;
+    background: #1a1a2e;
+    color: white;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: left;
+  }
+
+  .precio-card .plan-name { font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.5; margin-bottom: 8px; }
+  .precio-card .plan-price { font-size: 48px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+  .precio-card .plan-price span { font-size: 18px; font-weight: 400; opacity: 0.6; }
+  .precio-card .plan-period { font-size: 14px; opacity: 0.5; margin-bottom: 24px; }
+  .precio-card ul { list-style: none; padding: 0; margin-bottom: 28px; }
+  .precio-card li { font-size: 14px; padding: 6px 0; color: rgba(255,255,255,0.8); display: flex; align-items: center; gap: 10px; }
+  .precio-card li::before { content: "\2713"; color: #4caf50; font-weight: 700; flex-shrink: 0; }
+
+  /* === FORMULARIO LISTA DE ESPERA === */
+  .waitlist {
+    padding: 80px 24px;
+    text-align: center;
+  }
+
+  .waitlist h2 {
+    font-size: clamp(24px, 3.5vw, 36px);
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .waitlist > p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 40px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .waitlist-form {
+    max-width: 480px;
+    margin: 0 auto;
+    background: #fafafa;
+    border-radius: 20px;
+    padding: 36px;
+    border: 1px solid #eee;
+    text-align: left;
+  }
+
+  .form-field {
+    margin-bottom: 16px;
+  }
+
+  .form-field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 6px;
+  }
+
+  .form-field input,
+  .form-field select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: inherit;
+    background: white;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+
+  .form-field input:focus,
+  .form-field select:focus {
+    outline: none;
+    border-color: #4fc3f7;
+  }
+
+  .form-field input::placeholder { color: #bbb; }
+
+  .form-submit {
+    width: 100%;
+    background: #1a1a2e;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: transform 0.2s;
+    font-family: inherit;
+  }
+
+  .form-submit:hover { transform: translateY(-1px); }
+
+  .form-note {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 12px;
+    color: #999;
+  }
+
+  /* === OBJECIONES === */
+  .objeciones { background: #fafafa; padding: 80px 24px; }
+  .objeciones-inner { max-width: 700px; margin: 0 auto; }
+  .objeciones h2 { font-size: clamp(24px, 3.5vw, 36px); font-weight: 700; margin-bottom: 40px; text-align: center; }
+  .faq-item { background: white; border-radius: 12px; padding: 24px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+  .faq-q { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .faq-a { font-size: 14px; color: #666; line-height: 1.6; }
+
+  /* === CTA FINAL === */
+  .cta-final { padding: 80px 24px; text-align: center; }
+  .cta-final h2 { font-size: clamp(24px, 3.5vw, 36px); font-weight: 700; margin-bottom: 16px; }
+  .cta-final p { font-size: 16px; color: #666; margin-bottom: 32px; }
+
+  /* === FOOTER === */
+  footer { border-top: 1px solid #eee; padding: 40px 24px; text-align: center; }
+  .footer-inner { max-width: 1080px; margin: 0 auto; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 16px; }
+  .footer-links a { font-size: 13px; color: #999; text-decoration: none; }
+  .footer-links a:hover { color: #666; }
+  .footer-copy { font-size: 12px; color: #ccc; }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 640px) {
+    .nav-links a:not(.nav-cta) { display: none; }
+    .comparativa { grid-template-columns: 1fr; }
+    .phone-mockup { transform: scale(0.85); }
+    .hero { padding: 120px 20px 60px; }
+    .precio-card { padding: 28px; }
+    .precio-card .plan-price { font-size: 40px; }
+    .problema { flex-direction: column; }
+    .app-preview-frame { flex-direction: column; padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="logo">omni<span>24</span></div>
+    <div class="nav-links">
+      <a href="#producto">Producto</a>
+      <a href="#casos">Casos de uso</a>
+      <a href="#precio">Precio</a>
+      <a href="#preguntas">Preguntas</a>
+      <a href="#registro" class="nav-cta">Quiero mi kit</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>El sistema de monitoreo con IA para que tu negocio crezca y viva sin ti.</h1>
+  <p>omni24 analiza cada interacción con inteligencia artificial y te dice cómo va tu equipo. En 2 minutos, todos los días.</p>
+  <a href="#registro" class="hero-cta">Quiero mi kit →</a>
+  <div class="hero-sub">Lugares limitados · Te contactamos en menos de 24 horas</div>
+</section>
+
+<!-- APP PREVIEW + HERO IMAGE -->
+<section class="app-preview">
+  <div class="app-preview-frame">
+    <div class="phone-mockup">
+      <div class="phone-screen">
+        <div style="font-size:11px; color:rgba(255,255,255,0.4); margin-bottom:4px;">Cremeria Don Pepe</div>
+        <div style="font-size:12px; color:rgba(255,255,255,0.3); margin-bottom:16px;">Hoy, lunes 21 de abril</div>
+        <div class="mock-score">8.3</div>
+        <div class="mock-label">Calificacion del dia</div>
+        <div style="width:100%; padding-top: 8px;">
+          <div style="font-size:11px; color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; text-align:left;">Calificaciones generales</div>
+          <div class="mock-cat">
+            <div class="mock-dot" style="background:#4caf50;"></div>
+            <div class="mock-cat-name">Atencion al cliente</div>
+            <div class="mock-cat-score" style="color:#4caf50;">9.1</div>
+          </div>
+          <div class="mock-cat">
+            <div class="mock-dot" style="background:#ff9800;"></div>
+            <div class="mock-cat-name">Orden y limpieza</div>
+            <div class="mock-cat-score" style="color:#ff9800;">6.8</div>
+          </div>
+          <div class="mock-cat">
+            <div class="mock-dot" style="background:#4caf50;"></div>
+            <div class="mock-cat-name">Ventas y promociones</div>
+            <div class="mock-cat-score" style="color:#4caf50;">8.5</div>
+          </div>
+          <div class="mock-cat">
+            <div class="mock-dot" style="background:#4caf50;"></div>
+            <div class="mock-cat-name">Visitas atendidas</div>
+            <div class="mock-cat-score" style="color:#4caf50;">7.9</div>
+          </div>
+        </div>
+        <div style="margin-top:20px; width:100%; text-align:left;">
+          <div style="font-size:11px; color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Ultimo evento</div>
+          <div style="background:rgba(255,255,255,0.06); border-radius:8px; padding:10px 12px; font-size:12px; color:rgba(255,255,255,0.7); line-height:1.4;">
+            <span style="color:#4caf50; font-weight:600;">14:32</span> — Laura recomendo el especial del dia y el cliente compro ambos productos.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="preview-text">
+      <h3>Tu negocio en 2 minutos</h3>
+      <p>Abre la app y ve la calificacion del dia, quien atendio bien, que mejorar, y los momentos importantes. Sin revisar horas de video.</p>
+      <img src="img/hero_dueno_tranquilo.jpg" alt="Dueño de negocio revisando la app de omni24 desde fuera de su local" class="section-img" style="margin-top:20px; max-height:220px;">
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEMA -->
+<section class="problema">
+  <div class="problema-text">
+    <div class="section-label">El problema</div>
+    <h2>Tienes camaras. Graban todo. Pero tu no tienes tiempo de ver horas de video.</h2>
+    <p>Cuando no estas, no sabes si atendieron bien. Si ofrecieron la promocion. Si abrieron a tiempo. Cuando preguntas, te dicen "todo bien". Pero tu sabes que no siempre es asi.</p>
+  </div>
+  <div class="problema-img">
+    <img src="img/problema_camaras.jpg" alt="Dueña de negocio frustrada mirando cámaras de seguridad" class="section-img" style="max-height:320px;">
+  </div>
+</section>
+
+<!-- SOLUCIÓN -->
+<section class="solucion" id="producto">
+  <div class="solucion-inner">
+    <h2>Asi de facil funciona</h2>
+    <div class="pasos">
+      <div class="paso">
+        <div class="paso-num">1</div>
+        <h3>Te enviamos el kit listo</h3>
+        <p>Camara + microfono + procesador con IA. Todo preconfigurado. Solo conectas a la corriente y al WiFi.</p>
+        <img src="img/kit_empacado.jpg" alt="Kit omni24: cámara, micrófono y procesador" class="section-img" style="margin-top:16px; max-height:160px;">
+      </div>
+      <div class="paso">
+        <div class="paso-num">2</div>
+        <h3>Se instala en 30 minutos</h3>
+        <p>Vamos a tu negocio y lo dejamos funcionando. Tu configuras tu negocio desde la app con 4 preguntas.</p>
+        <img src="img/instalacion.jpg" alt="Instalación de cámara en comercio local" class="section-img" style="margin-top:16px; max-height:160px;">
+      </div>
+      <div class="paso">
+        <div class="paso-num">3</div>
+        <h3>Abres la app y sabes todo</h3>
+        <p>Calificacion del dia, momentos importantes, quien atendio bien y que mejorar. En 2 minutos.</p>
+        <img src="img/mano_celular.jpg" alt="App omni24 mostrando calificación 8.3" class="section-img" style="margin-top:16px; max-height:160px;">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIFERENCIADOR -->
+<section class="diferenciador">
+  <h2>Tu camara graba. omni24 entiende.</h2>
+  <p class="sub">La diferencia entre grabar lo que pasa y entender lo que pasa.</p>
+  <div class="comparativa">
+    <div class="comp-card comp-old">
+      <h3>Camaras tradicionales</h3>
+      <ul>
+        <li>Graban video que nadie revisa</li>
+        <li>Necesitas ver horas de video para enterarte</li>
+        <li>No te dicen quien atendio bien o mal</li>
+        <li>No escuchan conversaciones</li>
+        <li>Solo sirven despues de un problema</li>
+      </ul>
+    </div>
+    <div class="comp-card comp-new">
+      <h3>omni24</h3>
+      <ul>
+        <li>Analiza video y audio con IA todo el dia</li>
+        <li>Te resume el dia en 2 minutos</li>
+        <li>Te dice quien hizo que, con nombre</li>
+        <li>Entiende las conversaciones con clientes</li>
+        <li>Te ayuda a mejorar antes de que haya problema</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <div class="features-inner">
+    <h2>Todo lo que incluye tu kit</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <img src="img/feature_score.jpg" alt="Score 8.3 con categorías" class="section-img" style="max-height:120px; margin-bottom:12px; border-radius:10px;">
+        <h3>Calificacion diaria</h3>
+        <p>Score de 1 a 10 por cada categoria: atencion, orden, ventas y flujo de personas.</p>
+      </div>
+      <div class="feature-card">
+        <img src="img/feature_personas.jpg" alt="Chips de empleados con scores" class="section-img" style="max-height:120px; margin-bottom:12px; border-radius:10px;">
+        <h3>Por persona</h3>
+        <p>Sabes como le fue a cada miembro de tu equipo. Quien destaca y quien necesita apoyo.</p>
+      </div>
+      <div class="feature-card">
+        <img src="img/feature_live.jpg" alt="Video en vivo del negocio" class="section-img" style="max-height:120px; margin-bottom:12px; border-radius:10px;">
+        <h3>App en tu celular</h3>
+        <p>Revisa como va tu negocio desde cualquier lugar. Video en vivo, historial y reportes.</p>
+      </div>
+      <div class="feature-card">
+        <img src="img/feature_momentos.jpg" alt="Grid de momentos clave capturados" class="section-img" style="max-height:120px; margin-bottom:12px; border-radius:10px;">
+        <h3>Momentos clave</h3>
+        <p>Fotos automaticas de los momentos importantes. Ves lo que paso sin buscar en el video.</p>
+      </div>
+      <div class="feature-card">
+        <img src="img/feature_plan_mejora.jpg" alt="Resumen semanal compartido por WhatsApp" class="section-img" style="max-height:120px; margin-bottom:12px; border-radius:10px;">
+        <h3>Plan de mejora semanal</h3>
+        <p>Cada semana, una sugerencia concreta para mejorar. Compartela con tu equipo por WhatsApp.</p>
+      </div>
+      <div class="feature-card">
+        <img src="img/feature_nocturno.jpg" alt="Vigilancia nocturna del negocio" class="section-img" style="max-height:120px; margin-bottom:12px; border-radius:10px;">
+        <h3>Vigilante nocturno</h3>
+        <p>De noche, detecta movimiento y te avisa. Tu negocio cuidado las 24 horas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CASOS DE ÉXITO -->
+<section class="casos" id="casos">
+  <div class="casos-inner">
+    <h2>Negocios que ya crecen con omni24</h2>
+    <p class="sub">Asi lo usan dueños como tu.</p>
+    <div class="casos-grid">
+
+      <div class="caso-card">
+        <div class="caso-header">
+          <div class="caso-avatar">RM</div>
+          <div class="caso-info">
+            <h4>Roberto M.</h4>
+            <span>Cremeria · 3 empleados</span>
+          </div>
+        </div>
+        <div class="caso-quote">"Antes llegaba y preguntaba 'como les fue' y me decian 'bien'. Ahora abro la app y se exactamente que paso. La semana pasada descubri que nadie ofrecia la promocion del 2x1 — la active y las ventas subieron."</div>
+        <div class="caso-result">Ventas complementarias +35% en 3 semanas</div>
+      </div>
+
+      <div class="caso-card">
+        <div class="caso-header">
+          <div class="caso-avatar">AL</div>
+          <div class="caso-info">
+            <h4>Ana L.</h4>
+            <span>Estetica · 2 empleadas</span>
+          </div>
+        </div>
+        <div class="caso-quote">"Tenia camaras pero nunca las revisaba. Con omni24 me doy cuenta de cosas que no sabia — una de mis empleadas es increible atendiendo y nunca se lo habia reconocido. Se lo compartí por WhatsApp y vi el cambio."</div>
+        <div class="caso-result">Calificacion de atencion de 6.2 a 8.9</div>
+      </div>
+
+      <div class="caso-card">
+        <div class="caso-header">
+          <div class="caso-avatar">JC</div>
+          <div class="caso-info">
+            <h4>Jorge C.</h4>
+            <span>Restaurante · 5 empleados</span>
+          </div>
+        </div>
+        <div class="caso-quote">"Tengo 2 sucursales y no puedo estar en las dos. omni24 es como tener un socio que esta ahi todo el dia y me cuenta todo en la noche. Ya no llego a apagar incendios — llego a reconocer lo que hicieron bien."</div>
+        <div class="caso-result">Redujo incidencias de atencion 60% en 1 mes</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PRECIO -->
+<section class="precio" id="precio">
+  <h2>Un solo plan. Todo incluido.</h2>
+  <p class="sub">Sin inversion inicial. Sin sorpresas. Cancela cuando quieras.</p>
+  <div class="precio-card">
+    <div class="plan-name">Plan omni24</div>
+    <div class="plan-price">$1,000 <span>MXN</span></div>
+    <div class="plan-period">al mes · IVA incluido</div>
+    <ul>
+      <li>Kit completo: camara + microfono + procesador con IA</li>
+      <li>Instalacion en tu negocio incluida</li>
+      <li>App con reportes diarios y calificaciones</li>
+      <li>Analisis de audio y video con inteligencia artificial</li>
+      <li>Plan de mejora semanal para tu equipo</li>
+      <li>Video en vivo y grabacion continua</li>
+      <li>Vigilante nocturno con alertas</li>
+      <li>Soporte tecnico por WhatsApp</li>
+    </ul>
+  </div>
+  <div style="margin-top:16px; font-size:13px; color:#999;">$33 pesos al dia. Un solo cliente recuperado al dia paga la suscripcion del mes.</div>
+</section>
+
+<!-- FORMULARIO LISTA DE ESPERA -->
+<section class="waitlist" id="registro">
+  <h2>Quiero mi kit omni24</h2>
+  <p>Dejanos tus datos y te contactamos en menos de 24 horas para contarte como funciona y agendar tu instalacion.</p>
+
+  <div class="waitlist-form">
+    <div class="form-field">
+      <label>Tu nombre</label>
+      <input type="text" placeholder="Ej: Roberto Martinez">
+    </div>
+    <div class="form-field">
+      <label>Nombre de tu negocio</label>
+      <input type="text" placeholder="Ej: Cremeria Don Pepe">
+    </div>
+    <div class="form-field">
+      <label>Tipo de negocio</label>
+      <select>
+        <option value="" disabled selected>Selecciona...</option>
+        <option>Restaurante / Fonda</option>
+        <option>Tienda / Abarrotes</option>
+        <option>Estetica / Salon</option>
+        <option>Consultorio</option>
+        <option>Taller</option>
+        <option>Otro</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label>WhatsApp (te contactamos por aqui)</label>
+      <input type="tel" placeholder="Ej: 443 123 4567">
+    </div>
+    <button class="form-submit">Quiero mi kit →</button>
+    <div class="form-note">Lugares limitados. Sin compromiso. Te llamamos para contarte todo.</div>
+  </div>
+</section>
+
+<!-- OBJECIONES -->
+<section class="objeciones" id="preguntas">
+  <div class="objeciones-inner">
+    <h2>Preguntas frecuentes</h2>
+
+    <div class="faq-item">
+      <div class="faq-q">Ya tengo camaras, ¿para que necesito omni24?</div>
+      <div class="faq-a">Tu camara graba pero tu no tienes tiempo de ver horas de video. omni24 analiza lo que graba y te dice lo que importa. Es la diferencia entre tener una camara y entender tu negocio.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">¿Mis empleados van a sentirse vigilados?</div>
+      <div class="faq-a">omni24 no es para vigilar — es para desarrollar. Cada semana, tu equipo recibe su resumen con lo que hizo bien y que puede mejorar. Es coaching, no control.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">¿No se de tecnologia, es dificil?</div>
+      <div class="faq-a">Nosotros instalamos todo. Tu solo abres la app. Si sabes usar WhatsApp, sabes usar omni24.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">¿Y la privacidad de mis clientes?</div>
+      <div class="faq-a">omni24 no identifica clientes. No usa reconocimiento facial. Todo se procesa localmente en tu negocio — tus datos no se suben a ninguna nube. Cumplimos con la ley de proteccion de datos.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">¿Puedo cancelar cuando quiera?</div>
+      <div class="faq-a">Si, sin penalizacion. Solo devuelves el equipo. Sin letra chiquita.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">¿Que pasa si el equipo falla?</div>
+      <div class="faq-a">Lo reemplazamos sin costo. El equipo es nuestro — nosotros nos encargamos de que funcione.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">¿Necesito internet?</div>
+      <div class="faq-a">Si, WiFi estable en tu negocio. El kit se conecta a tu red. No usa datos moviles.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <h2>Deja de adivinar. Empieza a saber.</h2>
+  <p>Tu negocio en 2 minutos. Todos los dias.</p>
+  <a href="#registro" class="hero-cta">Quiero mi kit →</a>
+  <div class="hero-sub" style="margin-top:12px;">Te contactamos en menos de 24 horas · Sin compromiso</div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-links">
+      <a href="/privacidad">Aviso de privacidad</a>
+      <a href="/terminos">Terminos de servicio</a>
+      <a href="mailto:hola@omni24.mx">hola@omni24.mx</a>
+      <a href="https://wa.me/524431234567">WhatsApp</a>
+    </div>
+    <div class="footer-copy">&copy; 2026 omni24. Morelia, Michoacan, Mexico.</div>
+  </div>
+</footer>
+
+</body>
+</html>
